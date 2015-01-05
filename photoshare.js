@@ -5,9 +5,15 @@ Meteor.methods({
     return !!this.userId;
   },
 
-  updateScore: function (id) {
+  updateItemScore: function (id) {
     if (Meteor.call("userSignedIn")) {
       Items.update(id, {$inc: {score: 5}});
+    }
+  },
+
+  deleteItem: function (id) {
+    if (Meteor.call("userSignedIn")) {
+      Items.remove(id);
     }
   },
 
@@ -35,7 +41,7 @@ if (Meteor.isClient) {
       displayName: "Item",
       render: function () {
         var model = this.props.data
-          , selectedClass = Session.equals("currentItem", model._id) ? "selected" : ""
+          , selectedClass = Meteor.user() && Session.equals("currentItem", model._id) ? "selected" : ""
           , attrs = {
               className: "item " + selectedClass,
               onClick: this.handleClick
@@ -73,7 +79,7 @@ if (Meteor.isClient) {
               },
               React.DOM.input({
                 type: "submit",
-                className: "btn btn-primary",
+                className: "btn btn-info",
                 value: "Add a photo"
               })
             )
@@ -81,16 +87,27 @@ if (Meteor.isClient) {
               React.DOM.h1(null, "Share your photos"),
               addPhoto
             )
-          , likeButton = Meteor.user() && React.DOM.button({
-              className: "btn btn-secondary like",
+          , currentItem = Items.findOne(Session.get("currentItem"))
+          , showLikebutton = Meteor.user() && currentItem
+          , showDeletebutton = currentItem && currentItem.user && Meteor.userId() == currentItem.user._id
+          , likeButton = showLikebutton && React.DOM.button({
+              className: "btn btn-primary like",
               onClick: this.handleLike
             }, "+5 likes")
+          , deleteButton = showDeletebutton && React.DOM.button({
+              className: "btn btn-danger delete",
+              onClick: this.handleDelete
+            }, "Delete")
+          , bottomButtons = React.DOM.div({className: "bottom-buttons"},
+              likeButton,
+              deleteButton
+            )
           , header = React.DOM.h1(null, "Popular Photos")
           , row = React.DOM.div({className: "row"}, items)
 
         return React.DOM.div({className: "container"},
                  jumbotron,
-                 likeButton,
+                 bottomButtons,
                  header,
                  row
                );
@@ -98,7 +115,14 @@ if (Meteor.isClient) {
 
       handleLike: function () {
         var id = Session.get("currentItem");
-        Meteor.call("updateScore", id);
+        Meteor.call("updateItemScore", id);
+      },
+
+      handleDelete: function () {
+        var id = Session.get("currentItem")
+          , msg = "Are you sure you want to delete your photo?";
+
+        confirm(msg) && Meteor.call("deleteItem", id);
       },
 
       addPhoto: function (event) {

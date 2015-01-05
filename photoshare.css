@@ -125,7 +125,7 @@ body {
   display: block;
 }
 
-.btn.like {
+.bottom-buttons {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -133,9 +133,19 @@ body {
   display: block;
   width: 100%;
   z-index: 9999;
+}
+
+.bottom-buttons .btn {
+  display: block;
+  width: 100%;
   border-radius: 0;
   border-top: 2px solid black;
-  background: #deebf6;
-  padding-top: 2em;
-  padding-bottom: 2em;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.bottom-buttons .btn.like {
+}
+
+.bottom-buttons .btn.delete {
 }
