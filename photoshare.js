@@ -26,46 +26,101 @@ Meteor.methods({
 });
 
 if (Meteor.isClient) {
-  Template.item.helpers({
-    isSelected: function () {
-      return Session.equals("currentItem", this._id) ?
-               "selected" : "";
+  Meteor.subscribe("items");
+
+  Meteor.startup(function () {
+    var Components = {}
+
+    Components.Item = React.createClass({
+      displayName: "Item",
+      render: function () {
+        var model = this.props.data
+          , selectedClass = Session.equals("currentItem", model._id) ? "selected" : ""
+          , attrs = {
+              className: "item " + selectedClass,
+              onClick: this.handleClick
+            }
+          , img = React.DOM.img({src: model.image})
+          , score = React.DOM.div({className: "score"}, model.score)
+          , name = React.DOM.div({className: "name"}, "posted by ", model.user.name)
+          , itemDiv = React.DOM.div(attrs, img, score, name)
+
+        return React.DOM.div({className: "col-md-3 col-sm-4"}, itemDiv)
+      },
+
+      handleClick: function (event) {
+        Session.set("currentItem", this.props.data._id);
+      }
+    });
+
+    Components.Main = React.createClass({
+      displayName: "Main",
+      render: function () {
+        var items = this.props.items.map(function (item) {
+              return React.createElement(Components.Item, {
+                key: item._id,
+                data: item
+              });
+            })
+          , addPhoto = Meteor.user() && React.DOM.form({
+                onSubmit: this.addPhoto
+              },
+              React.DOM.input({
+                type: "submit",
+                className: "btn btn-primary",
+                value: "Add a photo"
+              })
+            )
+          , jumbotron = React.DOM.div({className: "jumbotron"},
+              React.DOM.h1(null, "Share your photos"),
+              addPhoto
+            )
+          , likeButton = Meteor.user() && React.DOM.button({
+              className: "btn btn-secondary like",
+              onClick: this.handleLike
+            }, "+5 likes")
+          , header = React.DOM.h1(null, "Popular Photos")
+          , row = React.DOM.div({className: "row"}, items)
+
+        return React.DOM.div({className: "container"},
+                 jumbotron,
+                 likeButton,
+                 header,
+                 row
+               );
+      },
+
+      handleLike: function () {
+        var id = Session.get("currentItem");
+        Meteor.call("updateScore", id);
+      },
+
+      addPhoto: function (event) {
+        event.preventDefault();
+
+        MeteorCamera.getPicture(function (err, data) {
+          if (!err) {
+            Meteor.call("addPhoto", data);
+          }
+        });
+
+        return false;
+      }
+    });
+
+    var render = function() {
+      var allItems = Items.find({}, {sort: {score: -1}});
+      React.render(React.createElement(Components.Main, {
+        items: allItems
+      }), document.getElementById("main"));
     }
-  });
 
-  Template.item.events({
-    "click .item": function () {
-      Session.set("currentItem", this._id);
-    }
-  });
-
-  Template.main.helpers({
-    items: function () {
-      return Items.find({}, {sort: {score: -1}});
-    }
-  });
-
-  Template.main.events({
-    "click button.like": function () {
-      var id = Session.get("currentItem");
-      Meteor.call("updateScore", id);
-    },
-
-    "submit form": function (e) {
-      e.preventDefault();
-
-      MeteorCamera.getPicture(function (err, data) {
-        if (!err) {
-          Meteor.call("addPhoto", data);
-        }
-      });
-
-      return false;
-    }
+    Deps.autorun(render);
   });
 }
 
 if (Meteor.isServer) {
-  Meteor.startup(function () {
+  Meteor.publish("items", function () {
+    return Items.find();
   });
 }

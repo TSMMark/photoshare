@@ -100,6 +100,9 @@ button {width: auto; overflow: visible;}
 
 
 
+body {
+  padding-bottom: 120px;
+}
 
 .item {
   display: block;
@@ -110,13 +113,28 @@ button {width: auto; overflow: visible;}
 }
 
 .item.selected {
-  background: #ccc;
+  background: #deebf6;
 }
 
 .item img {
-  max-width: 200px;
+  width: 200px;
 }
 
 .item .score {
   display: block;
+}
+
+.btn.like {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  width: 100%;
+  z-index: 9999;
+  border-radius: 0;
+  border-top: 2px solid black;
+  background: #deebf6;
+  padding-top: 2em;
+  padding-bottom: 2em;
 }

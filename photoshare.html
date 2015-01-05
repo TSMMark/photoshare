@@ -1,44 +1,11 @@
 <head>
   <title>photoshare</title>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/react/0.12.2/react.js"></script>
   <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" />
 </head>
 
 <body>
-  {{> main}}
+  {{> loginButtons}}
+
+  <div id="main"></div>
 </body>
-
-<template name="main">
-  <div class="outer container">
-    <div class="jumbotron">
-      <h1>Share your photos</h1>
-
-      {{> loginButtons}}
-
-      {{#if currentUser}}
-        <form>
-          <input type="submit" class="btn btn-primary" value="Add photo" />
-        </form>
-      {{/if}}
-    </div>
-
-    {{#if currentUser}}
-      <button class="like">+5 likes</button>
-    {{/if}}
-
-    <div class="row">
-      {{#each items}}
-        {{> item}}
-      {{else}}
-        No items
-      {{/each}}
-    </div>
-  </div>
-</template>
-
-<template name="item">
-  <div class="item {{isSelected}} col-md-3">
-    <img src="{{image}}"/>
-    <div class="score">{{score}} people like this!</div>
-    <div class="name">posted by {{user.name}}</div>
-  </div>
-</template>
