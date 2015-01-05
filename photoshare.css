@@ -99,6 +99,16 @@ button {width: auto; overflow: visible;}
 .hidden {display: none;}
 
 
+
+
+.item {
+  display: block;
+  text-align: center;
+  border: 1px solid #999;
+  padding: 4px;
+  margin: 4px;
+}
+
 .item.selected {
   background: #ccc;
 }
@@ -109,4 +119,12 @@ button {width: auto; overflow: visible;}
 
 .item.selected .like {
   display: inline-block;
+}
+
+.item img {
+  max-width: 200px;
+}
+
+.item .score {
+  display: block;
 }

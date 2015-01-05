@@ -1,5 +1,30 @@
 Items = new Mongo.Collection("items");
 
+Meteor.methods({
+  userSignedIn: function () {
+    return !!this.userId;
+  },
+
+  updateScore: function (id) {
+    if (Meteor.call("userSignedIn")) {
+      Items.update(id, {$inc: {score: 5}});
+    }
+  },
+
+  addPhoto: function (data) {
+    if (Meteor.call("userSignedIn")) {
+      Items.insert({
+        image: data,
+        user: {
+          _id: Meteor.user()._id,
+          name: Meteor.user().username
+        },
+        score: 0
+      });
+    }
+  }
+});
+
 if (Meteor.isClient) {
   Template.item.helpers({
     isSelected: function () {
@@ -11,6 +36,11 @@ if (Meteor.isClient) {
   Template.item.events({
     "click .item": function () {
       Session.set("currentItem", this._id);
+    },
+
+    "click .item button.like": function () {
+      var id = Session.get("currentItem");
+      Items.update(id, {$inc: {score: 5}});
     }
   });
 
@@ -21,9 +51,20 @@ if (Meteor.isClient) {
   });
 
   Template.main.events({
-    "click button.like": function () {
-      var item = Session.get("currentItem");
-      Items.update(item, { $inc: {score: 5} });
+    "keydown": function (e) {
+      console.log(e);
+    },
+
+    "submit form": function (e) {
+      e.preventDefault();
+
+      MeteorCamera.getPicture(function (err, data) {
+        if (!err) {
+          Meteor.call("addPhoto", data);
+        }
+      });
+
+      return false;
     }
   });
 }

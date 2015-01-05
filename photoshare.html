@@ -1,27 +1,42 @@
 <head>
   <title>photoshare</title>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" />
 </head>
 
 <body>
-  <h1>Share da photos</h1>
-
   {{> main}}
 </body>
 
 <template name="main">
-  <div class="outer">
-    {{#each items}}
-      {{> item}}
-    {{else}}
-      No items
-    {{/each}}
+  <div class="outer container">
+    <div class="jumbotron">
+      <h1>Share your photos</h1>
+
+      {{> loginButtons}}
+
+      {{#if currentUser}}
+        <form>
+          <input type="submit" class="btn btn-primary" value="Add photo" />
+        </form>
+      {{/if}}
+    </div>
+
+    <div class="row">
+      {{#each items}}
+        {{> item}}
+      {{else}}
+        No items
+      {{/each}}
+    </div>
   </div>
 </template>
 
 <template name="item">
-  <div class="item {{isSelected}}">
-    <span class="text">{{text}}</span>
-    <span class="score">{{score}}</span>
-    <button class="like">Click to like!</button>
+  <div class="item {{isSelected}} col-md-3">
+    <img src="{{image}}"/>
+    <div class="score">{{score}} people like this!</div>
+    {{#if currentUser}}
+      <button class="like">+5 likes</button>
+    {{/if}}
   </div>
 </template>
