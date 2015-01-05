@@ -1,0 +1,27 @@
+<head>
+  <title>photoshare</title>
+</head>
+
+<body>
+  <h1>Share da photos</h1>
+
+  {{> main}}
+</body>
+
+<template name="main">
+  <div class="outer">
+    {{#each items}}
+      {{> item}}
+    {{else}}
+      No items
+    {{/each}}
+  </div>
+</template>
+
+<template name="item">
+  <div class="item {{isSelected}}">
+    <span class="text">{{text}}</span>
+    <span class="score">{{score}}</span>
+    <button class="like">Click to like!</button>
+  </div>
+</template>
