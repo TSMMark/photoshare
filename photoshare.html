@@ -21,6 +21,10 @@
       {{/if}}
     </div>
 
+    {{#if currentUser}}
+      <button class="like">+5 likes</button>
+    {{/if}}
+
     <div class="row">
       {{#each items}}
         {{> item}}
@@ -35,8 +39,6 @@
   <div class="item {{isSelected}} col-md-3">
     <img src="{{image}}"/>
     <div class="score">{{score}} people like this!</div>
-    {{#if currentUser}}
-      <button class="like">+5 likes</button>
-    {{/if}}
+    <div class="name">posted by {{user.name}}</div>
   </div>
 </template>

@@ -113,14 +113,6 @@ button {width: auto; overflow: visible;}
   background: #ccc;
 }
 
-.item .like {
-  display: none;
-}
-
-.item.selected .like {
-  display: inline-block;
-}
-
 .item img {
   max-width: 200px;
 }

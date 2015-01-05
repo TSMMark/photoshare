@@ -17,7 +17,7 @@ Meteor.methods({
         image: data,
         user: {
           _id: Meteor.user()._id,
-          name: Meteor.user().username
+          name: Meteor.user().profile.name
         },
         score: 0
       });
@@ -36,11 +36,6 @@ if (Meteor.isClient) {
   Template.item.events({
     "click .item": function () {
       Session.set("currentItem", this._id);
-    },
-
-    "click .item button.like": function () {
-      var id = Session.get("currentItem");
-      Items.update(id, {$inc: {score: 5}});
     }
   });
 
@@ -51,8 +46,9 @@ if (Meteor.isClient) {
   });
 
   Template.main.events({
-    "keydown": function (e) {
-      console.log(e);
+    "click button.like": function () {
+      var id = Session.get("currentItem");
+      Meteor.call("updateScore", id);
     },
 
     "submit form": function (e) {
