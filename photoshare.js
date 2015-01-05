@@ -49,7 +49,13 @@ if (Meteor.isClient) {
       },
 
       handleClick: function (event) {
-        Session.set("currentItem", this.props.data._id);
+        var current = Session.get("currentItem");
+        if (current == this.props.data._id) {
+          Session.set("currentItem", null);
+        }
+        else {
+          Session.set("currentItem", this.props.data._id);
+        }
       }
     });
 

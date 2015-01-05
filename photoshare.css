@@ -102,6 +102,7 @@ button {width: auto; overflow: visible;}
 
 body {
   padding-bottom: 120px;
+  padding-top: 18px;
 }
 
 .item {
